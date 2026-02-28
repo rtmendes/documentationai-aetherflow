@@ -1,1939 +1,1401 @@
-openapi: 3.0.3
+openapi: "3.0.3"
 info:
-  title: QwicbookTwidget
   version: 1.0.0
-  contact: {}
+  title: AetherFlow API
+  description: |
+    AetherFlow is an AI-powered workflow automation platform that helps teams automate complex business processes through intelligent document processing and multi-step workflows.
+
+    ## Authentication
+    All API requests require authentication using Bearer tokens. Include your API key in the Authorization header: `Authorization: Bearer your_api_key`
+
+    ## Rate Limits
+    - 1000 requests per hour for read operations
+    - 100 requests per hour for write operations
+    - 10 concurrent workflow executions per organization
+
+    ## Base URL
+    All API requests should be made to: `https://api.aetherflow.com/v1`
+  contact:
+    email: support@aetherflow.com
+    url: https://docs.aetherflow.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
 servers:
-  - url: https://d300b.twidget.io
-  - url: http://ws.eighty20technologies.com
+  - url: https://api.aetherflow.com/v1
+    description: Production API server
+  - url: https://staging-api.aetherflow.com/v1
+    description: Staging API server
 paths:
-  /checkusertype:
+  /workflows:
     get:
-      summary: checkusertype
-      description: checkusertype
-      operationId: checkusertype
+      tags:
+        - Workflows
+      summary: List all workflows
+      description: Retrieve a paginated list of workflows belonging to the authenticated organization. Workflows are returned in descending order of creation date.
+      operationId: listWorkflows
+      security:
+        - bearerAuth: []
       parameters:
-        - name: Email
+        - name: limit
           in: query
+          description: Maximum's number of workflows to return (1-100, default 20)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          description: Number of workflows to skip for pagination
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            default: 0
+        - name: status
+          in: query
+          description: Filter workflows by status
+          required: false
           schema:
             type: string
-            example: drdeepakhbk@gmail.com
+            enum: [active, inactive, draft]
+        - name: tags
+          in: query
+          description: Filter workflows by tags (comma-separated)
+          required: false
+          schema:
+            type: string
       responses:
-        '200':
-          description: checkusertype
+        "200":
+          description: Successful response with paginated workflow list
           headers:
-            Access-Control-Allow-Credentials:
+            x-total-count:
+              description: Total number of workflows matching the query
+              schema:
+                type: integer
+            x-next:
+              description: Link to next page of results
               schema:
                 type: string
-                example: 'true'
-            Connection:
-              schema:
-                type: string
-                example: keep-alive
-            Content-Length:
-              schema:
-                type: string
-                example: '96'
-            Date:
-              schema:
-                type: string
-                example: Sat, 28 Feb 2026 07:12:41 GMT
-            ETag:
-              schema:
-                type: string
-                example: W/"60-BlQaC41vL8dlWsZy/0WbPqZ1Mq4"
-            Strict-Transport-Security:
-              schema:
-                type: string
-                example: max-age=15724800; includeSubDomains
-            Vary:
-              schema:
-                type: string
-                example: Origin
-            X-Powered-By:
-              schema:
-                type: string
-                example: Express
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    AdminUserMasterID:
-                      type: number
-                      example: 1
-                    City:
-                      type: string
-                      example: Mumbai
-                    CityID:
-                      type: number
-                      example: 9
-                    Mobile:
-                      type: string
-                      example: '8380021488'
-                    UserType:
-                      type: string
-                      example: Provider
-                example:
-                  - AdminUserMasterID: 1
-                    City: Mumbai
-                    CityID: 9
-                    Mobile: '8380021488'
-                    UserType: Provider
-              examples:
-                checkusertype:
-                  value:
-                    - AdminUserMasterID: 1
-                      City: Mumbai
-                      CityID: 9
-                      Mobile: '8380021488'
-                      UserType: Provider
-      security:
-        - {}
-  /authenticate:
-    get:
-      summary: authenticate
-      description: authenticate
-      operationId: authenticate
-      parameters:
-        - name: Email
-          in: query
-          schema:
-            type: string
-            example: drdeepakhbk@gmail.com
-        - name: Password
-          in: query
-          schema:
-            type: string
-            example: development
-      responses:
-        '200':
-          description: authenticate
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-                example: 'true'
-            Connection:
-              schema:
-                type: string
-                example: keep-alive
-            Content-Length:
-              schema:
-                type: string
-                example: '4'
-            Date:
-              schema:
-                type: string
-                example: Sat, 28 Feb 2026 07:13:09 GMT
-            ETag:
-              schema:
-                type: string
-                example: W/"4-X/5TO4MPCKAyY0ipFgr6/IraRNs"
-            Strict-Transport-Security:
-              schema:
-                type: string
-                example: max-age=15724800; includeSubDomains
-            Vary:
-              schema:
-                type: string
-                example: Origin
-            X-Powered-By:
-              schema:
-                type: string
-                example: Express
-          content:
-            application/octet-stream:
-              examples:
-                authenticate:
-                  value: 'true'
-      security:
-        - {}
-  /getuser:
-    get:
-      summary: getuser
-      description: getuser
-      operationId: getuser
-      parameters:
-        - name: AdminUserMasterId
-          in: query
-          schema:
-            type: string
-            example: '1'
-      responses:
-        '200':
-          description: getuser
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-                example: 'true'
-            Connection:
-              schema:
-                type: string
-                example: keep-alive
-            Content-Length:
-              schema:
-                type: string
-                example: '471'
-            Date:
-              schema:
-                type: string
-                example: Sat, 28 Feb 2026 07:13:32 GMT
-            ETag:
-              schema:
-                type: string
-                example: W/"1d7-GNDYMopx8kBjnBlOGiPKqS9zXL0"
-            Strict-Transport-Security:
-              schema:
-                type: string
-                example: max-age=15724800; includeSubDomains
-            Vary:
-              schema:
-                type: string
-                example: Origin
-            X-Powered-By:
-              schema:
-                type: string
-                example: Express
+                $ref: "#/components/schemas/WorkflowListResponse"
+              example:
+                workflows:
+                  - id: "wf_123456"
+                    name: "Invoice Processing Workflow"
+                    description: "Automatically processes incoming invoices and extracts key information"
+                    status: "active"
+                    created_at: "2024-01-15T10:30:00Z"
+                    updated_at: "2024-01-20T14:45:00Z"
+                    tags: ["finance", "automation"]
+                    steps_count: 5
+                total: 1
+                limit: 20
+                offset: 0
+        "400":
+          description: Invalid request parameters
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    APServiceID:
-                      type: number
-                      example: 0
-                    Active:
-                      type: string
-                      example: '1'
-                    Address1:
-                      type: string
-                      example: 75 Hatkesh Society
-                    Address2:
-                      type: string
-                      example: Juhu Scheme
-                    AdminUserMasterID:
-                      type: number
-                      example: 1
-                    AreaID:
-                      type: number
-                      example: 10
-                    City:
-                      type: string
-                      example: Mumbai
-                    CityID:
-                      type: number
-                      example: 9
-                    CountryID:
-                      type: number
-                      example: 1
-                    DeviceID:
-                      nullable: true
-                      example: null
-                    DisplayName:
-                      nullable: true
-                      example: null
-                    Email:
-                      type: string
-                      example: drdeepakhbk@gmail.com
-                    FirstName:
-                      type: string
-                      example: Dr. Deepak
-                    IsUserAvailable:
-                      type: boolean
-                      example: false
-                    LastName:
-                      type: string
-                      example: Kansara
-                    Mobile:
-                      type: string
-                      example: '8380021488'
-                    Password:
-                      type: string
-                      example: development
-                    ShopCount:
-                      type: number
-                      example: 0
-                    ShopNames:
-                      nullable: true
-                      example: null
-                    State:
-                      type: string
-                      example: MH
-                    StateID:
-                      type: number
-                      example: 2
-                    UserCategory:
-                      nullable: true
-                      example: null
-                    UserQualification:
-                      nullable: true
-                      example: null
-                    UserType:
-                      type: string
-                      example: Provider
-                example:
-                  - APServiceID: 0
-                    Active: '1'
-                    Address1: 75 Hatkesh Society
-                    Address2: Juhu Scheme
-                    AdminUserMasterID: 1
-                    AreaID: 10
-                    City: Mumbai
-                    CityID: 9
-                    CountryID: 1
-                    DeviceID: null
-                    DisplayName: null
-                    Email: drdeepakhbk@gmail.com
-                    FirstName: Dr. Deepak
-                    IsUserAvailable: false
-                    LastName: Kansara
-                    Mobile: '8380021488'
-                    Password: development
-                    ShopCount: 0
-                    ShopNames: null
-                    State: MH
-                    StateID: 2
-                    UserCategory: null
-                    UserQualification: null
-                    UserType: Provider
-              examples:
-                getuser:
-                  value:
-                    - APServiceID: 0
-                      Active: '1'
-                      Address1: 75 Hatkesh Society
-                      Address2: Juhu Scheme
-                      AdminUserMasterID: 1
-                      AreaID: 10
-                      City: Mumbai
-                      CityID: 9
-                      CountryID: 1
-                      DeviceID: null
-                      DisplayName: null
-                      Email: drdeepakhbk@gmail.com
-                      FirstName: Dr. Deepak
-                      IsUserAvailable: false
-                      LastName: Kansara
-                      Mobile: '8380021488'
-                      Password: development
-                      ShopCount: 0
-                      ShopNames: null
-                      State: MH
-                      StateID: 2
-                      UserCategory: null
-                      UserQualification: null
-                      UserType: Provider
-      security:
-        - {}
-  /getuserinformation:
-    get:
-      summary: getuserinformation
-      description: getuserinformation
-      operationId: getuserinformation
-      parameters:
-        - name: AdminUserMasterId
-          in: query
-          schema:
-            type: string
-            example: '1'
-      responses:
-        '200':
-          description: getuserinformation
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-                example: 'true'
-            Connection:
-              schema:
-                type: string
-                example: keep-alive
-            Content-Length:
-              schema:
-                type: string
-                example: '173'
-            Date:
-              schema:
-                type: string
-                example: Sat, 28 Feb 2026 07:13:52 GMT
-            ETag:
-              schema:
-                type: string
-                example: W/"ad-shnkx+g7qfgGyQybVAUSEragLqk"
-            Strict-Transport-Security:
-              schema:
-                type: string
-                example: max-age=15724800; includeSubDomains
-            Vary:
-              schema:
-                type: string
-                example: Origin
-            X-Powered-By:
-              schema:
-                type: string
-                example: Express
+                $ref: "#/components/schemas/Error"
+              example:
+                code: 400
+                message: "Invalid status filter. Must be one of: active, inactive, draft"
+                details: { "status": "invalid_status" }
+        "401":
+          description: Authentication required
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    CustomerNumber:
-                      type: string
-                      example: '108155'
-                    ExpiryDate:
-                      type: string
-                      example: 31-Dec-2030
-                    RegisteredEmailID:
-                      type: string
-                      example: drdeepakhbk@gmail.com
-                    RegisteredMobile:
-                      type: string
-                      example: '8380021488'
-                    Remarks:
-                      type: string
-                      example: ''
-                    SupportMobileNumber1:
-                      nullable: true
-                      example: null
-                example:
-                  - CustomerNumber: '108155'
-                    ExpiryDate: 31-Dec-2030
-                    RegisteredEmailID: drdeepakhbk@gmail.com
-                    RegisteredMobile: '8380021488'
-                    Remarks: ''
-                    SupportMobileNumber1: null
-              examples:
-                getuserinformation:
-                  value:
-                    - CustomerNumber: '108155'
-                      ExpiryDate: 31-Dec-2030
-                      RegisteredEmailID: drdeepakhbk@gmail.com
-                      RegisteredMobile: '8380021488'
-                      Remarks: ''
-                      SupportMobileNumber1: null
-      security:
-        - {}
-  /providerdetails:
-    get:
-      summary: providerdetails
-      description: providerdetails
-      operationId: providerdetails
-      parameters:
-        - name: AdminUserMasterId
-          in: query
-          schema:
-            type: string
-            example: '1'
-      responses:
-        '200':
-          description: providerdetails
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-                example: 'true'
-            Connection:
-              schema:
-                type: string
-                example: keep-alive
-            Content-Length:
-              schema:
-                type: string
-                example: '307'
-            Date:
-              schema:
-                type: string
-                example: Sat, 28 Feb 2026 07:14:15 GMT
-            ETag:
-              schema:
-                type: string
-                example: W/"133-duiHDH4sjmydfBsNbZUbS9ZJCkk"
-            Strict-Transport-Security:
-              schema:
-                type: string
-                example: max-age=15724800; includeSubDomains
-            Vary:
-              schema:
-                type: string
-                example: Origin
-            X-Powered-By:
-              schema:
-                type: string
-                example: Express
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    APServiceID:
-                      type: number
-                      example: 1
-                    AssociationType:
-                      nullable: true
-                      example: null
-                    ServiceName:
-                      type: string
-                      example: Lokhandwala Clinic
-                example:
-                  - APServiceID: 1
-                    AssociationType: null
-                    ServiceName: Lokhandwala Clinic
-                  - APServiceID: 2
-                    AssociationType: null
-                    ServiceName: Juhu Clinic
-                  - APServiceID: 103
-                    AssociationType: null
-                    ServiceName: Orchid Hospital (Orthopedic)
-                  - APServiceID: 5
-                    AssociationType: null
-                    ServiceName: Nijanand Clinic
-              examples:
-                providerdetails:
-                  value:
-                    - APServiceID: 1
-                      AssociationType: null
-                      ServiceName: Lokhandwala Clinic
-                    - APServiceID: 2
-                      AssociationType: null
-                      ServiceName: Juhu Clinic
-                    - APServiceID: 103
-                      AssociationType: null
-                      ServiceName: Orchid Hospital (Orthopedic)
-                    - APServiceID: 5
-                      AssociationType: null
-                      ServiceName: Nijanand Clinic
-      security:
-        - {}
-  /getproviderdetailsbyappointment:
-    get:
-      summary: getproviderdetailsbyappointment
-      description: getproviderdetailsbyappointment
-      operationId: getproviderdetailsbyappointment
-      parameters:
-        - name: AppointmentBookingId
-          in: query
-          schema:
-            type: string
-            example: '7871'
-      responses:
-        '200':
-          description: getproviderdetailsbyappointment
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-                example: 'true'
-            Connection:
-              schema:
-                type: string
-                example: keep-alive
-            Content-Length:
-              schema:
-                type: string
-                example: '340'
-            Date:
-              schema:
-                type: string
-                example: Sat, 28 Feb 2026 07:14:40 GMT
-            ETag:
-              schema:
-                type: string
-                example: W/"154-ANLH87PI0f/69Yuxu7+Zdj+2oPc"
-            Strict-Transport-Security:
-              schema:
-                type: string
-                example: max-age=15724800; includeSubDomains
-            Vary:
-              schema:
-                type: string
-                example: Origin
-            X-Powered-By:
-              schema:
-                type: string
-                example: Express
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    Address:
-                      type: string
-                      example: Lokhandwala Complex, Andheri (W) Mumbai - 400053
-                    AppointmentBookingID:
-                      type: number
-                      example: 7871
-                    Category:
-                      type: string
-                      example: Doctor
-                    FullName:
-                      type: string
-                      example: Dr. Deepak Kansara
-                    Message:
-                      type: string
-                      example: Providers details for your appointment
-                    Mobile:
-                      type: string
-                      example: '8380021488'
-                    NewTime:
-                      type: string
-                      example: 11:32 (Your new time)
-                    OldTime:
-                      type: string
-                      example: '11:05'
-                    Qualification:
-                      type: string
-                      example: General Physician
-                    ServiceName:
-                      type: string
-                      example: Lokhandwala Clinic
-                example:
-                  - Address: Lokhandwala Complex, Andheri (W) Mumbai - 400053
-                    AppointmentBookingID: 7871
-                    Category: Doctor
-                    FullName: Dr. Deepak Kansara
-                    Message: Providers details for your appointment
-                    Mobile: '8380021488'
-                    NewTime: 11:32 (Your new time)
-                    OldTime: '11:05'
-                    Qualification: General Physician
-                    ServiceName: Lokhandwala Clinic
-              examples:
-                getproviderdetailsbyappointment:
-                  value:
-                    - Address: Lokhandwala Complex, Andheri (W) Mumbai - 400053
-                      AppointmentBookingID: 7871
-                      Category: Doctor
-                      FullName: Dr. Deepak Kansara
-                      Message: Providers details for your appointment
-                      Mobile: '8380021488'
-                      NewTime: 11:32 (Your new time)
-                      OldTime: '11:05'
-                      Qualification: General Physician
-                      ServiceName: Lokhandwala Clinic
-      security:
-        - {}
-  /getappointmentbyshop:
-    get:
-      summary: getappointmentbyshop
-      description: getappointmentbyshop
-      operationId: getappointmentbyshop
-      parameters:
-        - name: APServiceId
-          in: query
-          schema:
-            type: string
-            example: '1'
-        - name: AppointmentDate
-          in: query
-          schema:
-            type: string
-            example: 9-Feb-2026
-      responses:
-        '200':
-          description: getappointmentbyshop
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-                example: 'true'
-            Connection:
-              schema:
-                type: string
-                example: keep-alive
-            Content-Length:
-              schema:
-                type: string
-                example: '1066'
-            Date:
-              schema:
-                type: string
-                example: Sat, 28 Feb 2026 07:15:25 GMT
-            ETag:
-              schema:
-                type: string
-                example: W/"42a-0uF0zqfSwyDdDODZtPb2Ecyjx+A"
-            Strict-Transport-Security:
-              schema:
-                type: string
-                example: max-age=15724800; includeSubDomains
-            Vary:
-              schema:
-                type: string
-                example: Origin
-            X-Powered-By:
-              schema:
-                type: string
-                example: Express
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    APServiceTransID:
-                      type: number
-                      example: 28891
-                    AdminUserMasterID:
-                      type: number
-                      example: 6
-                    AppointmentBookingID:
-                      type: number
-                      example: 7870
-                    BookedForDate:
-                      type: string
-                      example: 09-Feb-2026
-                    BookingDate:
-                      type: string
-                      example: 08-Feb-2026
-                    DisplayName:
-                      type: string
-                      example: Tushar (Web User)
-                    FromTime:
-                      type: string
-                      example: '11:00'
-                    ParentName:
-                      type: string
-                      example: Web User
-                    PatientName:
-                      type: string
-                      example: Tushar
-                    Remarks:
-                      type: string
-                      example: 8380021488 - Bot - Testing
-                    SequenceNumber:
-                      type: string
-                      example: '0'
-                    ToTime:
-                      type: string
-                      example: '11:05'
-                    TokenNumber:
-                      type: string
-                      example: '1'
-                    UserIn:
-                      type: number
-                      example: 0
-                    UserOut:
-                      type: number
-                      example: 0
-                example:
-                  - APServiceTransID: 28891
-                    AdminUserMasterID: 6
-                    AppointmentBookingID: 7870
-                    BookedForDate: 09-Feb-2026
-                    BookingDate: 08-Feb-2026
-                    DisplayName: Tushar (Web User)
-                    FromTime: '11:00'
-                    ParentName: Web User
-                    PatientName: Tushar
-                    Remarks: 8380021488 - Bot - Testing
-                    SequenceNumber: '0'
-                    ToTime: '11:05'
-                    TokenNumber: '1'
-                    UserIn: 0
-                    UserOut: 0
-                  - APServiceTransID: 28892
-                    AdminUserMasterID: 6
-                    AppointmentBookingID: 7871
-                    BookedForDate: 09-Feb-2026
-                    BookingDate: 08-Feb-2026
-                    DisplayName: Ravi (Web User)
-                    FromTime: '11:05'
-                    ParentName: Web User
-                    PatientName: Ravi
-                    Remarks: 8380021488 - Bot - None
-                    SequenceNumber: '0'
-                    ToTime: '11:10'
-                    TokenNumber: '2'
-                    UserIn: 0
-                    UserOut: 0
-                  - APServiceTransID: 28893
-                    AdminUserMasterID: 6
-                    AppointmentBookingID: 7874
-                    BookedForDate: 09-Feb-2026
-                    BookingDate: 08-Feb-2026
-                    DisplayName: TPTWIDGET (Web User)
-                    FromTime: '11:10'
-                    ParentName: Web User
-                    PatientName: TPTWIDGET
-                    Remarks: 8380021488 - from postman Twidget
-                    SequenceNumber: '0'
-                    ToTime: '11:15'
-                    TokenNumber: '3'
-                    UserIn: 1
-                    UserOut: 1
-              examples:
-                getappointmentbyshop:
-                  value:
-                    - APServiceTransID: 28891
-                      AdminUserMasterID: 6
-                      AppointmentBookingID: 7870
-                      BookedForDate: 09-Feb-2026
-                      BookingDate: 08-Feb-2026
-                      DisplayName: Tushar (Web User)
-                      FromTime: '11:00'
-                      ParentName: Web User
-                      PatientName: Tushar
-                      Remarks: 8380021488 - Bot - Testing
-                      SequenceNumber: '0'
-                      ToTime: '11:05'
-                      TokenNumber: '1'
-                      UserIn: 0
-                      UserOut: 0
-                    - APServiceTransID: 28892
-                      AdminUserMasterID: 6
-                      AppointmentBookingID: 7871
-                      BookedForDate: 09-Feb-2026
-                      BookingDate: 08-Feb-2026
-                      DisplayName: Ravi (Web User)
-                      FromTime: '11:05'
-                      ParentName: Web User
-                      PatientName: Ravi
-                      Remarks: 8380021488 - Bot - None
-                      SequenceNumber: '0'
-                      ToTime: '11:10'
-                      TokenNumber: '2'
-                      UserIn: 0
-                      UserOut: 0
-                    - APServiceTransID: 28893
-                      AdminUserMasterID: 6
-                      AppointmentBookingID: 7874
-                      BookedForDate: 09-Feb-2026
-                      BookingDate: 08-Feb-2026
-                      DisplayName: TPTWIDGET (Web User)
-                      FromTime: '11:10'
-                      ParentName: Web User
-                      PatientName: TPTWIDGET
-                      Remarks: 8380021488 - from postman Twidget
-                      SequenceNumber: '0'
-                      ToTime: '11:15'
-                      TokenNumber: '3'
-                      UserIn: 1
-                      UserOut: 1
-      security:
-        - {}
-  /getschedule:
-    get:
-      summary: getschedule
-      description: getschedule
-      operationId: getschedule
-      parameters:
-        - name: APServiceId
-          in: query
-          schema:
-            type: string
-            example: '1'
-        - name: CurrentDate
-          in: query
-          schema:
-            type: string
-            example: 9-Feb-2026
-        - name: TodayDate
-          in: query
-          schema:
-            type: string
-            example: 9-Feb-2026
-        - name: TodayTime
-          in: query
-          schema:
-            type: string
-            example: '14:30'
-      responses:
-        '200':
-          description: getschedule
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-                example: 'true'
-            Connection:
-              schema:
-                type: string
-                example: keep-alive
-            Content-Length:
-              schema:
-                type: string
-                example: '5167'
-            Date:
-              schema:
-                type: string
-                example: Sat, 28 Feb 2026 07:15:46 GMT
-            ETag:
-              schema:
-                type: string
-                example: W/"142f-yVXhCuSbqBTSC7XKNA3/tS2SzJM"
-            Strict-Transport-Security:
-              schema:
-                type: string
-                example: max-age=15724800; includeSubDomains
-            Vary:
-              schema:
-                type: string
-                example: Origin
-            X-Powered-By:
-              schema:
-                type: string
-                example: Express
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    APServiceID:
-                      type: number
-                      example: 1
-                    APServiceTransID:
-                      type: number
-                      example: 28915
-                    CurrentDate:
-                      nullable: true
-                      example: null
-                    Day:
-                      type: number
-                      example: 0
-                    DayPart:
-                      type: string
-                      example: E
-                    FromTime:
-                      type: string
-                      example: '17:00 | TKN: 1'
-                    IsOOOFlag:
-                      type: number
-                      example: 0
-                    ToTime:
-                      type: string
-                      example: '17:05'
-                example:
-                  - APServiceID: 1
-                    APServiceTransID: 28915
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '17:00 | TKN: 1'
-                    IsOOOFlag: 0
-                    ToTime: '17:05'
-                  - APServiceID: 1
-                    APServiceTransID: 28916
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '17:05 | TKN: 2'
-                    IsOOOFlag: 0
-                    ToTime: '17:10'
-                  - APServiceID: 1
-                    APServiceTransID: 28917
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '17:10 | TKN: 3'
-                    IsOOOFlag: 0
-                    ToTime: '17:15'
-                  - APServiceID: 1
-                    APServiceTransID: 28918
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '17:15 | TKN: 4'
-                    IsOOOFlag: 0
-                    ToTime: '17:20'
-                  - APServiceID: 1
-                    APServiceTransID: 28919
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '17:20 | TKN: 5'
-                    IsOOOFlag: 0
-                    ToTime: '17:25'
-                  - APServiceID: 1
-                    APServiceTransID: 28920
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '17:25 | TKN: 6'
-                    IsOOOFlag: 0
-                    ToTime: '17:30'
-                  - APServiceID: 1
-                    APServiceTransID: 28921
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '17:30 | TKN: 7'
-                    IsOOOFlag: 0
-                    ToTime: '17:35'
-                  - APServiceID: 1
-                    APServiceTransID: 28922
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '17:35 | TKN: 8'
-                    IsOOOFlag: 0
-                    ToTime: '17:40'
-                  - APServiceID: 1
-                    APServiceTransID: 28923
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '17:40 | TKN: 9'
-                    IsOOOFlag: 0
-                    ToTime: '17:45'
-                  - APServiceID: 1
-                    APServiceTransID: 28924
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '17:45 | TKN: 10'
-                    IsOOOFlag: 0
-                    ToTime: '17:50'
-                  - APServiceID: 1
-                    APServiceTransID: 28925
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '17:50 | TKN: 11'
-                    IsOOOFlag: 0
-                    ToTime: '17:55'
-                  - APServiceID: 1
-                    APServiceTransID: 28926
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '17:55 | TKN: 12'
-                    IsOOOFlag: 0
-                    ToTime: '18:00'
-                  - APServiceID: 1
-                    APServiceTransID: 28927
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '18:00 | TKN: 13'
-                    IsOOOFlag: 0
-                    ToTime: '18:05'
-                  - APServiceID: 1
-                    APServiceTransID: 28928
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '18:05 | TKN: 14'
-                    IsOOOFlag: 0
-                    ToTime: '18:10'
-                  - APServiceID: 1
-                    APServiceTransID: 28929
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '18:10 | TKN: 15'
-                    IsOOOFlag: 0
-                    ToTime: '18:15'
-                  - APServiceID: 1
-                    APServiceTransID: 28930
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '18:15 | TKN: 16'
-                    IsOOOFlag: 0
-                    ToTime: '18:20'
-                  - APServiceID: 1
-                    APServiceTransID: 28931
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '18:20 | TKN: 17'
-                    IsOOOFlag: 0
-                    ToTime: '18:25'
-                  - APServiceID: 1
-                    APServiceTransID: 28932
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '18:25 | TKN: 18'
-                    IsOOOFlag: 0
-                    ToTime: '18:30'
-                  - APServiceID: 1
-                    APServiceTransID: 28933
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '18:30 | TKN: 19'
-                    IsOOOFlag: 0
-                    ToTime: '18:35'
-                  - APServiceID: 1
-                    APServiceTransID: 28934
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '18:35 | TKN: 20'
-                    IsOOOFlag: 0
-                    ToTime: '18:40'
-                  - APServiceID: 1
-                    APServiceTransID: 28935
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '18:40 | TKN: 21'
-                    IsOOOFlag: 0
-                    ToTime: '18:45'
-                  - APServiceID: 1
-                    APServiceTransID: 28936
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '18:45 | TKN: 22'
-                    IsOOOFlag: 0
-                    ToTime: '18:50'
-                  - APServiceID: 1
-                    APServiceTransID: 28937
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '18:50 | TKN: 23'
-                    IsOOOFlag: 0
-                    ToTime: '18:55'
-                  - APServiceID: 1
-                    APServiceTransID: 28938
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '18:55 | TKN: 24'
-                    IsOOOFlag: 0
-                    ToTime: '19:00'
-                  - APServiceID: 1
-                    APServiceTransID: 28939
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '20:00 | TKN: 1'
-                    IsOOOFlag: 0
-                    ToTime: '20:05'
-                  - APServiceID: 1
-                    APServiceTransID: 28940
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '20:05 | TKN: 2'
-                    IsOOOFlag: 0
-                    ToTime: '20:10'
-                  - APServiceID: 1
-                    APServiceTransID: 28941
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '20:10 | TKN: 3'
-                    IsOOOFlag: 0
-                    ToTime: '20:15'
-                  - APServiceID: 1
-                    APServiceTransID: 28942
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '20:15 | TKN: 4'
-                    IsOOOFlag: 0
-                    ToTime: '20:20'
-                  - APServiceID: 1
-                    APServiceTransID: 28943
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '20:20 | TKN: 5'
-                    IsOOOFlag: 0
-                    ToTime: '20:25'
-                  - APServiceID: 1
-                    APServiceTransID: 28944
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '20:25 | TKN: 6'
-                    IsOOOFlag: 0
-                    ToTime: '20:30'
-                  - APServiceID: 1
-                    APServiceTransID: 28945
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '20:30 | TKN: 7'
-                    IsOOOFlag: 0
-                    ToTime: '20:35'
-                  - APServiceID: 1
-                    APServiceTransID: 28946
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '20:35 | TKN: 8'
-                    IsOOOFlag: 0
-                    ToTime: '20:40'
-                  - APServiceID: 1
-                    APServiceTransID: 28947
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '20:40 | TKN: 9'
-                    IsOOOFlag: 0
-                    ToTime: '20:45'
-                  - APServiceID: 1
-                    APServiceTransID: 28948
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '20:45 | TKN: 10'
-                    IsOOOFlag: 0
-                    ToTime: '20:50'
-                  - APServiceID: 1
-                    APServiceTransID: 28949
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '20:50 | TKN: 11'
-                    IsOOOFlag: 0
-                    ToTime: '20:55'
-                  - APServiceID: 1
-                    APServiceTransID: 28950
-                    CurrentDate: null
-                    Day: 0
-                    DayPart: E
-                    FromTime: '20:55 | TKN: 12'
-                    IsOOOFlag: 0
-                    ToTime: '21:00'
-              examples:
-                getschedule:
-                  value:
-                    - APServiceID: 1
-                      APServiceTransID: 28915
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '17:00 | TKN: 1'
-                      IsOOOFlag: 0
-                      ToTime: '17:05'
-                    - APServiceID: 1
-                      APServiceTransID: 28916
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '17:05 | TKN: 2'
-                      IsOOOFlag: 0
-                      ToTime: '17:10'
-                    - APServiceID: 1
-                      APServiceTransID: 28917
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '17:10 | TKN: 3'
-                      IsOOOFlag: 0
-                      ToTime: '17:15'
-                    - APServiceID: 1
-                      APServiceTransID: 28918
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '17:15 | TKN: 4'
-                      IsOOOFlag: 0
-                      ToTime: '17:20'
-                    - APServiceID: 1
-                      APServiceTransID: 28919
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '17:20 | TKN: 5'
-                      IsOOOFlag: 0
-                      ToTime: '17:25'
-                    - APServiceID: 1
-                      APServiceTransID: 28920
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '17:25 | TKN: 6'
-                      IsOOOFlag: 0
-                      ToTime: '17:30'
-                    - APServiceID: 1
-                      APServiceTransID: 28921
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '17:30 | TKN: 7'
-                      IsOOOFlag: 0
-                      ToTime: '17:35'
-                    - APServiceID: 1
-                      APServiceTransID: 28922
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '17:35 | TKN: 8'
-                      IsOOOFlag: 0
-                      ToTime: '17:40'
-                    - APServiceID: 1
-                      APServiceTransID: 28923
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '17:40 | TKN: 9'
-                      IsOOOFlag: 0
-                      ToTime: '17:45'
-                    - APServiceID: 1
-                      APServiceTransID: 28924
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '17:45 | TKN: 10'
-                      IsOOOFlag: 0
-                      ToTime: '17:50'
-                    - APServiceID: 1
-                      APServiceTransID: 28925
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '17:50 | TKN: 11'
-                      IsOOOFlag: 0
-                      ToTime: '17:55'
-                    - APServiceID: 1
-                      APServiceTransID: 28926
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '17:55 | TKN: 12'
-                      IsOOOFlag: 0
-                      ToTime: '18:00'
-                    - APServiceID: 1
-                      APServiceTransID: 28927
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '18:00 | TKN: 13'
-                      IsOOOFlag: 0
-                      ToTime: '18:05'
-                    - APServiceID: 1
-                      APServiceTransID: 28928
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '18:05 | TKN: 14'
-                      IsOOOFlag: 0
-                      ToTime: '18:10'
-                    - APServiceID: 1
-                      APServiceTransID: 28929
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '18:10 | TKN: 15'
-                      IsOOOFlag: 0
-                      ToTime: '18:15'
-                    - APServiceID: 1
-                      APServiceTransID: 28930
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '18:15 | TKN: 16'
-                      IsOOOFlag: 0
-                      ToTime: '18:20'
-                    - APServiceID: 1
-                      APServiceTransID: 28931
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '18:20 | TKN: 17'
-                      IsOOOFlag: 0
-                      ToTime: '18:25'
-                    - APServiceID: 1
-                      APServiceTransID: 28932
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '18:25 | TKN: 18'
-                      IsOOOFlag: 0
-                      ToTime: '18:30'
-                    - APServiceID: 1
-                      APServiceTransID: 28933
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '18:30 | TKN: 19'
-                      IsOOOFlag: 0
-                      ToTime: '18:35'
-                    - APServiceID: 1
-                      APServiceTransID: 28934
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '18:35 | TKN: 20'
-                      IsOOOFlag: 0
-                      ToTime: '18:40'
-                    - APServiceID: 1
-                      APServiceTransID: 28935
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '18:40 | TKN: 21'
-                      IsOOOFlag: 0
-                      ToTime: '18:45'
-                    - APServiceID: 1
-                      APServiceTransID: 28936
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '18:45 | TKN: 22'
-                      IsOOOFlag: 0
-                      ToTime: '18:50'
-                    - APServiceID: 1
-                      APServiceTransID: 28937
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '18:50 | TKN: 23'
-                      IsOOOFlag: 0
-                      ToTime: '18:55'
-                    - APServiceID: 1
-                      APServiceTransID: 28938
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '18:55 | TKN: 24'
-                      IsOOOFlag: 0
-                      ToTime: '19:00'
-                    - APServiceID: 1
-                      APServiceTransID: 28939
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '20:00 | TKN: 1'
-                      IsOOOFlag: 0
-                      ToTime: '20:05'
-                    - APServiceID: 1
-                      APServiceTransID: 28940
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '20:05 | TKN: 2'
-                      IsOOOFlag: 0
-                      ToTime: '20:10'
-                    - APServiceID: 1
-                      APServiceTransID: 28941
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '20:10 | TKN: 3'
-                      IsOOOFlag: 0
-                      ToTime: '20:15'
-                    - APServiceID: 1
-                      APServiceTransID: 28942
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '20:15 | TKN: 4'
-                      IsOOOFlag: 0
-                      ToTime: '20:20'
-                    - APServiceID: 1
-                      APServiceTransID: 28943
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '20:20 | TKN: 5'
-                      IsOOOFlag: 0
-                      ToTime: '20:25'
-                    - APServiceID: 1
-                      APServiceTransID: 28944
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '20:25 | TKN: 6'
-                      IsOOOFlag: 0
-                      ToTime: '20:30'
-                    - APServiceID: 1
-                      APServiceTransID: 28945
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '20:30 | TKN: 7'
-                      IsOOOFlag: 0
-                      ToTime: '20:35'
-                    - APServiceID: 1
-                      APServiceTransID: 28946
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '20:35 | TKN: 8'
-                      IsOOOFlag: 0
-                      ToTime: '20:40'
-                    - APServiceID: 1
-                      APServiceTransID: 28947
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '20:40 | TKN: 9'
-                      IsOOOFlag: 0
-                      ToTime: '20:45'
-                    - APServiceID: 1
-                      APServiceTransID: 28948
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '20:45 | TKN: 10'
-                      IsOOOFlag: 0
-                      ToTime: '20:50'
-                    - APServiceID: 1
-                      APServiceTransID: 28949
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '20:50 | TKN: 11'
-                      IsOOOFlag: 0
-                      ToTime: '20:55'
-                    - APServiceID: 1
-                      APServiceTransID: 28950
-                      CurrentDate: null
-                      Day: 0
-                      DayPart: E
-                      FromTime: '20:55 | TKN: 12'
-                      IsOOOFlag: 0
-                      ToTime: '21:00'
-      security:
-        - {}
-  /Appointment/Service1.svc/InsertOOO:
+                $ref: "#/components/schemas/Error"
     post:
-      summary: Appointment/InsertOOO
-      description: Appointment/InsertOOO
-      operationId: appointmentInsertooo
+      tags:
+        - Workflows
+      summary: Create a new workflow
+      description: Create a new workflow with the specified configuration. The workflow will be created in draft status and can be activated later.
+      operationId: createWorkflow
+      security:
+        - bearerAuth: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                adminOOO:
-                  type: object
-                  properties:
-                    AdminUserMasterID:
-                      type: string
-                      example: '1'
-                    IsOOO:
-                      type: string
-                      example: '1'
-                    OOOFrom:
-                      type: string
-                      example: '2026-02-01T00:00:00'
-                    OOOID:
-                      type: string
-                      example: '1'
-                    OOOMessage:
-                      type: string
-                      example: I am out of office. TP
-                    OOOTo:
-                      type: string
-                      example: '2026-02-10T00:00:00'
-            examples:
-              Appointment/InsertOOO:
-                value:
-                  adminOOO:
-                    AdminUserMasterID: '1'
-                    IsOOO: '1'
-                    OOOFrom: '2026-02-01T00:00:00'
-                    OOOID: '1'
-                    OOOMessage: I am out of office. TP
-                    OOOTo: '2026-02-10T00:00:00'
+              $ref: "#/components/schemas/CreateWorkflowRequest"
+            example:
+              name: "Document Classification Workflow"
+              description: "Automatically classifies and routes incoming documents based on content analysis"
+              steps:
+                - type: "document_upload"
+                  config:
+                    allowed_formats: ["pdf", "docx", "png", "jpg"]
+                - type: "ai_analysis"
+                  config:
+                    model: "gpt-4"
+                    prompt: "Analyze this document and classify it into categories: invoice, contract, report, or other"
+                - type: "conditional_routing"
+                  config:
+                    conditions:
+                      - field: "classification"
+                        operator: "equals"
+                        value: "invoice"
+                        action: "route_to_finance"
+              tags: ["document-processing", "ai-powered"]
+              settings:
+                timeout_minutes: 30
+                retry_count: 3
+                notifications:
+                  on_success: true
+                  on_failure: true
       responses:
-        '200':
-          description: ''
-      security:
-        - {}
-  /insertooo:
-    post:
-      summary: insertooo
-      description: insertooo
-      operationId: insertooo
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                AdminUserMasterID:
-                  type: string
-                  example: '1'
-                IsOOO:
-                  type: string
-                  example: '0'
-                OOOFrom:
-                  type: string
-                  example: '2026-02-01T00:00:00'
-                OOOID:
-                  type: string
-                  example: '0'
-                OOOMessage:
-                  type: string
-                  example: I am out of office.
-                OOOTo:
-                  type: string
-                  example: '2026-02-10T00:00:00'
-            examples:
-              insertooo:
-                value:
-                  AdminUserMasterID: '1'
-                  IsOOO: '0'
-                  OOOFrom: '2026-02-01T00:00:00'
-                  OOOID: '0'
-                  OOOMessage: I am out of office.
-                  OOOTo: '2026-02-10T00:00:00'
-      responses:
-        '200':
-          description: insertooo
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-                example: 'true'
-            Connection:
-              schema:
-                type: string
-                example: keep-alive
-            Content-Length:
-              schema:
-                type: string
-                example: '1'
-            Date:
-              schema:
-                type: string
-                example: Sat, 28 Feb 2026 07:19:59 GMT
-            ETag:
-              schema:
-                type: string
-                example: W/"1-NWoZK3kTsExUV00Ywo1G5jlUKKs"
-            Strict-Transport-Security:
-              schema:
-                type: string
-                example: max-age=15724800; includeSubDomains
-            Vary:
-              schema:
-                type: string
-                example: Origin
-            X-Powered-By:
-              schema:
-                type: string
-                example: Express
-          content:
-            application/octet-stream:
-              examples:
-                insertooo:
-                  value: '1'
-      security:
-        - {}
-  /insertappointments:
-    post:
-      summary: insertappointments
-      description: insertappointments
-      operationId: insertappointments
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                APServiceTransID:
-                  type: string
-                  example: '28893'
-                AdminUserMasterID:
-                  type: string
-                  example: '6'
-                AlternateMobile:
-                  type: string
-                  example: '8380021488'
-                BookedForDate:
-                  type: string
-                  example: 3-Mar-2026
-                PatientName:
-                  type: string
-                  example: TPTWIDGET
-                Remarks:
-                  type: string
-                  example: from postman Twidget
-            examples:
-              insertappointments:
-                value:
-                  APServiceTransID: '28893'
-                  AdminUserMasterID: '6'
-                  AlternateMobile: '8380021488'
-                  BookedForDate: 3-Mar-2026
-                  PatientName: TPTWIDGET
-                  Remarks: from postman Twidget
-      responses:
-        '200':
-          description: insertappointments / insertappointments
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-                example: 'true'
-            Connection:
-              schema:
-                type: string
-                example: keep-alive
-            Content-Length:
-              schema:
-                type: string
-                example: '43'
-            Date:
-              schema:
-                type: string
-                example: Sat, 28 Feb 2026 07:21:10 GMT
-            ETag:
-              schema:
-                type: string
-                example: W/"2b-hm9x6cstajhabSM+onsYURaYbuM"
-            Strict-Transport-Security:
-              schema:
-                type: string
-                example: max-age=15724800; includeSubDomains
-            Vary:
-              schema:
-                type: string
-                example: Origin
-            X-Powered-By:
-              schema:
-                type: string
-                example: Express
+        "201":
+          description: Workflow created successfully
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    AppointmentBookingID:
-                      type: number
-                      example: 0
-                    Token:
-                      type: string
-                      example: '0'
-                example:
-                  - AppointmentBookingID: 0
-                    Token: '0'
-              examples:
-                insertappointments:
-                  value:
-                    - AppointmentBookingID: 7876
-                      Token: '3'
+                $ref: "#/components/schemas/Workflow"
+              example:
+                id: "wf_123456"
+                name: "Document Classification Workflow"
+                description: "Automatically classifies and routes incoming documents based on content analysis"
+                status: "draft"
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-15T10:30:00Z"
+                tags: ["document-processing", "ai-powered"]
+                steps_count: 3
+                settings:
+                  timeout_minutes: 30
+                  retry_count: 3
+        "400":
+          description: Invalid workflow configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                code: 400
+                message: "Workflow validation failed"
+                details:
+                  steps: ["Step 1: Missing required config field 'model'"]
+        "401":
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /workflows/{workflowId}:
+    get:
+      tags:
+        - Workflows
+      summary: Retrieve a specific workflow
+      description: Get detailed information about a specific workflow, including its configuration, steps, and execution history.
+      operationId: getWorkflowById
       security:
-        - {}
-  /insertlatedetails:
-    post:
-      summary: insertlatedetails
-      description: insertlatedetails
-      operationId: insertlatedetails
+        - bearerAuth: []
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: "The unique identifier of the workflow (format: wf_xxxxxxxx)"
+          schema:
+            type: string
+            pattern: "^wf_[a-zA-Z0-9]{8,}$"
+            example: "wf_12345678"
+        - name: include_steps
+          in: query
+          description: Include detailed step configuration in the response
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: include_executions
+          in: query
+          description: Include recent execution history (last 10 executions)
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: Workflow retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkflowDetail"
+              example:
+                id: "wf_12345678"
+                name: "Invoice Processing Workflow"
+                description: "Automatically processes incoming invoices and extracts key information"
+                status: "active"
+                created_at: "2024-01-15T10:30:00Z"
+                updated_at: "2024-01-20T14:45:00Z"
+                tags: ["finance", "automation"]
+                steps_count: 5
+                settings:
+                  timeout_minutes: 30
+                  retry_count: 3
+                  notifications:
+                    on_success: true
+                    on_failure: true
+                steps:
+                  - id: "step_1"
+                    type: "document_upload"
+                    name: "Upload Invoice"
+                    order: 1
+                    config:
+                      allowed_formats: ["pdf", "png", "jpg"]
+                  - id: "step_2"
+                    type: "ai_extraction"
+                    name: "Extract Invoice Data"
+                    order: 2
+                    config:
+                      model: "gpt-4-vision"
+                      fields:
+                        [
+                          "invoice_number",
+                          "total_amount",
+                          "vendor_name",
+                          "due_date",
+                        ]
+                recent_executions:
+                  - id: "exec_abc123"
+                    status: "completed"
+                    started_at: "2024-01-20T14:30:00Z"
+                    completed_at: "2024-01-20T14:32:15Z"
+                    duration_seconds: 135
+        "404":
+          description: Workflow not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                code: 404
+                message: "Workflow with ID 'wf_invalid' not found"
+        "401":
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      tags:
+        - Work
+      summary: Update a workflow
+      description: Update an existing workflow's configuration, steps, or settings.
+      operationId: updateWorkflow
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: The unique identifier of the workflow to update
+          schema:
+            type: string
+            pattern: "^wf_[a-zA-Z0-9]{8,}$"
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                AdminUserMasterID:
-                  type: string
-                  example: '1'
-                LateDate:
-                  type: string
-                  example: 9-Feb-2026
-                LateID:
-                  type: string
-                  example: '0'
-                LateTime:
-                  type: string
-                  example: '11:27'
-                Message:
-                  type: string
-                  example: Sorry running late
-            examples:
-              insertlatedetails:
-                value:
-                  AdminUserMasterID: '1'
-                  LateDate: 9-Feb-2026
-                  LateID: '0'
-                  LateTime: '11:27'
-                  Message: Sorry running late
+              $ref: "#/components/schemas/UpdateWorkflowRequest"
       responses:
-        '200':
-          description: ''
+        "200":
+          description: Workflow updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workflow"
+        "404":
+          description: Workflow not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "400":
+          description: Invalid update request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      tags:
+        - Workflows
+      summary: Delete a workflow
+      description: Permanently delete a workflow and all its associated data. This action cannot be undone.
+      operationId: deleteWorkflow
       security:
-        - {}
-  /updateappointmentstatusex:
-    get:
-      summary: updateappointmentstatusex
-      description: updateappointmentstatusex
-      operationId: updateappointmentstatusex
+        - bearerAuth: []
       parameters:
-        - name: AppointmentBookingIDs
-          in: query
+        - name: workflowId
+          in: path
+          required: true
+          description: The unique identifier of the workflow to delete
           schema:
             type: string
-            example: '7874'
-        - name: UserInOut
-          in: query
-          schema:
-            type: string
-            example: '1'
-        - name: InOutStatus
-          in: query
-          schema:
-            type: string
-            example: Out
+            pattern: "^wf_[a-zA-Z0-9]{8,}$"
       responses:
-        '200':
-          description: updateappointmentstatusex / updateappointmentstatusex
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-                example: 'true'
-            Connection:
-              schema:
-                type: string
-                example: keep-alive
-            Content-Length:
-              schema:
-                type: string
-                example: '1'
-            Date:
-              schema:
-                type: string
-                example: Sat, 28 Feb 2026 07:16:10 GMT
-            ETag:
-              schema:
-                type: string
-                example: W/"1-NWoZK3kTsExUV00Ywo1G5jlUKKs"
-            Strict-Transport-Security:
-              schema:
-                type: string
-                example: max-age=15724800; includeSubDomains
-            Vary:
-              schema:
-                type: string
-                example: Origin
-            X-Powered-By:
-              schema:
-                type: string
-                example: Express
+        "204":
+          description: Workflow deleted successfully
+        "404":
+          description: Workflow not found
           content:
-            application/octet-stream:
-              examples:
-                updateappointmentstatusex:
-                  value: '1'
-  /deleteappointmentwithcustommessage:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /integrations:
     get:
-      summary: deleteappointmentwithcustommessage
-      description: deleteappointmentwithcustommessage
-      operationId: deleteappointmentwithcustommessage
+      tags:
+        - Integrations
+      summary: List connected integrations
+      description: Retrieve all integrations connected to your organization, with optional filtering by type or status.
+      operationId: listIntegrations
+      security:
+        - bearerAuth: []
       parameters:
-        - name: AppointmentBookingID
+        - name: type
           in: query
+          description: Filter by integration type
+          required: false
           schema:
             type: string
-            example: '7868'
-        - name: CustomMessage
+            enum:
+              [communication, productivity, storage, finance, crm, analytics]
+        - name: status
           in: query
+          description: Filter by connection status
+          required: false
           schema:
             type: string
-            example: Sorry, I cannot make it
+            enum: [connected, disconnected, error, pending]
       responses:
-        '200':
-          description: deleteappointmentwithcustommessage
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-                example: 'true'
-            Connection:
-              schema:
-                type: string
-                example: keep-alive
-            Content-Length:
-              schema:
-                type: string
-                example: '1'
-            Date:
-              schema:
-                type: string
-                example: Sat, 14 Feb 2026 13:26:31 GMT
-            ETag:
-              schema:
-                type: string
-                example: W/"1-NWoZK3kTsExUV00Ywo1G5jlUKKs"
-            Strict-Transport-Security:
-              schema:
-                type: string
-                example: max-age=15724800; includeSubDomains
-            Vary:
-              schema:
-                type: string
-                example: Origin
-            X-Powered-By:
-              schema:
-                type: string
-                example: Express
+        "200":
+          description: List of integrations retrieved successfully
           content:
-            application/octet-stream:
-              examples:
-                deleteappointmentwithcustommessage:
-                  value: '1'
-  /deletemultipleappointments:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntegrationListResponse"
+              example:
+                integrations:
+                  - id: "int_slack_001"
+                    name: "Slack Workspace"
+                    type: "communication"
+                    app: "slack"
+                    status: "connected"
+                    connected_at: "2024-01-10T09:15:00Z"
+                    last_sync: "2024-01-20T16:30:00Z"
+                    config:
+                      workspace_name: "AetherFlow Team"
+                      channels: ["#workflows", "#alerts"]
+                  - id: "int_gdrive_002"
+                    name: "Google Drive"
+                    type: "storage"
+                    app: "google_drive"
+                    status: "connected"
+                    connected_at: "2024-01-12T11:20:00Z"
+                    last_sync: "2024-01-20T15:45:00Z"
+                    config:
+                      shared_drive: "AetherFlow Documents"
+                total: 2
+        "401":
+          description: Authentication required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      tags:
+        - Integrations
+      summary: Connect a new integration
+      description: Connect a new third-party service to your AetherFlow organization. This will initiate the OAuth flow or API key validation process.
+      operationId: createIntegration
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateIntegrationRequest"
+            examples:
+              oauth_integration:
+                summary: OAuth-based integration (Slack, Google Drive)
+                value:
+                  app: "slack"
+                  type: "communication"
+                  config:
+                    scopes: ["channels:read", "chat:write", "files:read"]
+                    redirect_uri: "https://app.aetherflow.com/integrations/oauth/callback"
+              api_key_integration:
+                summary: API key-based integration
+                value:
+                  app: "webhook"
+                  type: "communication"
+                  config:
+                    webhook_url: "https://myapp.com/aetherflow-webhook"
+                    secret: "whsec_abcdef123456"
+                    events: ["workflow.completed", "workflow.failed"]
+      responses:
+        "201":
+          description: Integration connection initiated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Integration"
+              example:
+                id: "int_slack_001"
+                name: "Slack Workspace"
+                type: "communication"
+                app: "slack"
+                status: "pending"
+                created_at: "2024-01-20T16:45:00Z"
+                config:
+                  authorization_url: "https://slack.com/oauth/authorize?client_id=...&scope=channels:read,chat:write"
+        "400":
+          description: Invalid integration configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                code: 400
+                message: "Unsupported integration type"
+                details:
+                  {
+                    "supported_apps":
+                      ["slack", "google_drive", "webhook", "zapier"],
+                  }
+        "409":
+          description: Integration already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                code: 409
+                message: "Slack integration already connected to this workspace"
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /workflows/{workflowId}/execute:
+    post:
+      tags:
+        - Workflows
+      summary: Execute a workflow
+      description: Manually trigger the execution of a workflow with optional input data.
+      operationId: executeWorkflow
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          description: The unique identifier of the workflow to execute
+          schema:
+            type: string
+            pattern: "^wf_[a-zA-Z0-9]{8,}$"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExecuteWorkflowRequest"
+            example:
+              inputs:
+                document_url: "https://example.com/invoice.pdf"
+                priority: "high"
+              metadata:
+                source: "api_call"
+                user_id: "user_123"
+      responses:
+        "202":
+          description: Workflow execution started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutionResponse"
+        "404":
+          description: Workflow not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "400":
+          description: Invalid execution request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /executions/{executionId}:
     get:
-      summary: deletemultipleappointments
-      description: deletemultipleappointments
-      operationId: deletemultipleappointments
+      tags:
+        - Executions
+      summary: Get execution details
+      description: Retrieve detailed information about a specific workflow execution, including logs and results.
+      operationId: getExecution
+      security:
+        - bearerAuth: []
       parameters:
-        - name: AppointmentBookingIDs
-          in: query
+        - name: executionId
+          in: path
+          required: true
+          description: The unique identifier of the execution
           schema:
             type: string
-            example: '7838'
+            pattern: "^exec_[a-zA-Z0-9]{8,}$"
       responses:
-        '200':
-          description: deletemultipleappointments
-          headers:
-            Access-Control-Allow-Credentials:
-              schema:
-                type: string
-                example: 'true'
-            Connection:
-              schema:
-                type: string
-                example: keep-alive
-            Content-Length:
-              schema:
-                type: string
-                example: '1'
-            Date:
-              schema:
-                type: string
-                example: Sat, 14 Feb 2026 13:36:07 GMT
-            ETag:
-              schema:
-                type: string
-                example: W/"1-NWoZK3kTsExUV00Ywo1G5jlUKKs"
-            Strict-Transport-Security:
-              schema:
-                type: string
-                example: max-age=15724800; includeSubDomains
-            Vary:
-              schema:
-                type: string
-                example: Origin
-            X-Powered-By:
-              schema:
-                type: string
-                example: Express
+        "200":
+          description: Execution details retrieved
           content:
-            application/octet-stream:
-              examples:
-                deletemultipleappointments:
-                  value: '1'
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutionDetail"
+        "404":
+          description: Execution not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /webhooks:
+    get:
+      tags:
+        - Webhooks
+      summary: List webhooks
+      description: Retrieve all configured webhooks for workflow events.
+      operationId: listWebhooks
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Webhooks retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebhookListResponse"
+    post:
+      tags:
+        - Webhooks
+      summary: Create webhook
+      description: Create a new webhook endpoint to receive workflow execution events.
+      operationId: createWebhook
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWebhookRequest"
+      responses:
+        "201":
+          description: Webhook created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Webhook"
+  /analytics/workflows:
+    get:
+      tags:
+        - Analytics
+      summary: Get workflow analytics
+      description: Retrieve analytics and metrics about workflow performance and usage.
+      operationId: getWorkflowAnalytics
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: period
+          in: query
+          description: "Time period for analytics (default: 30d)"
+          required: false
+          schema:
+            type: string
+            enum: [7d, 30d, 90d, 1y]
+            default: "30d"
+      responses:
+        "200":
+          description: Analytics data retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsResponse"
 components:
-  securitySchemes: {}
-tags: []
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: API key authentication using Bearer token
+
+  schemas:
+    # Error Schema
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: HTTP status code
+          example: 400
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Invalid request parameters"
+        details:
+          type: object
+          description: Additional error details
+          example: { "field": "name", "reason": "required" }
+        request_id:
+          type: string
+          description: Unique request identifier for debugging
+          example: "req_abc123def456"
+
+    # Workflow Schemas
+    Workflow:
+      type: object
+      required:
+        - id
+        - name
+        - status
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          pattern: "^wf_[a-zA-Z0-9]{8,}$"
+          description: Unique workflow identifier
+          example: "wf_12345678"
+        name:
+          type: string
+          maxLength: 100
+          description: Human-readable workflow name
+          example: "Invoice Processing Workflow"
+        description:
+          type: string
+          maxLength: 500
+          description: Detailed workflow description
+          example: "Automatically processes incoming invoices and extracts key information"
+        status:
+          type: string
+          enum: [active, inactive, draft, archived]
+          description: Current workflow status
+          example: "active"
+        created_at:
+          type: string
+          format: date-time
+          description: When the workflow was created
+          example: "2024-01-15T10:30:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: When the workflow was last updated
+          example: "2024-01-20T14:45:00Z"
+        tags:
+          type: array
+          items:
+            type: string
+          maxItems: 10
+          description: Tags for organizing workflows
+          example: ["finance", "automation"]
+        steps_count:
+          type: integer
+          minimum: 1
+          maximum: 50
+          description: Number of steps in the workflow
+          example: 5
+        settings:
+          $ref: "#/components/schemas/WorkflowSettings"
+
+    WorkflowListResponse:
+      type: object
+      required:
+        - workflows
+        - total
+        - limit
+        - offset
+      properties:
+        workflows:
+          type: array
+          items:
+            $ref: "#/components/schemas/Workflow"
+        total:
+          type: integer
+          description: Total number of workflows matching the query
+          example: 25
+        limit:
+          type: integer
+          description: Requested limit
+          example: 20
+        offset:
+          type: integer
+          description: Requested offset
+          example: 0
+
+    WorkflowDetail:
+      allOf:
+        - $ref: "#/components/schemas/Workflow"
+        - type: object
+          properties:
+            steps:
+              type: array
+              items:
+                $ref: "#/components/schemas/WorkflowStep"
+              description: Detailed step configurations (only included when requested)
+            recent_executions:
+              type: array
+              items:
+                $ref: "#/components/schemas/ExecutionSummary"
+              maxItems: 10
+              description: Recent execution history (only included when requested)
+
+    WorkflowStep:
+      type: object
+      required:
+        - id
+        - type
+        - name
+        - order
+        - config
+      properties:
+        id:
+          type: string
+          pattern: "^step_[a-zA-Z0-9]{8,}$"
+          description: Unique step identifier
+          example: "step_abc123"
+        type:
+          type: string
+          enum:
+            [
+              document_upload,
+              ai_analysis,
+              ai_extraction,
+              conditional_routing,
+              webhook,
+              email_notification,
+              api_call,
+              database_query,
+            ]
+          description: Type of workflow step
+          example: "ai_extraction"
+        name:
+          type: string
+          maxLength: 100
+          description: Human-readable step name
+          example: "Extract Invoice Data"
+        order:
+          type: integer
+          minimum: 1
+          description: Execution order of the step
+          example: 2
+        config:
+          type: object
+          description: Step-specific configuration
+          example:
+            {
+              "model": "gpt-4-vision",
+              "fields": ["invoice_number", "total_amount"],
+            }
+        depends_on:
+          type: array
+          items:
+            type: string
+          description: IDs of steps this step depends on
+          example: ["step_xyz789"]
+
+    WorkflowSettings:
+      type: object
+      properties:
+        timeout_minutes:
+          type: integer
+          minimum: 1
+          maximum: 1440
+          default: 60
+          description: Maximum execution time in minutes
+          example: 30
+        retry_count:
+          type: integer
+          minimum: 0
+          maximum: 10
+          default: 0
+          description: Number of retry attempts on failure
+          example: 3
+        retry_delay_seconds:
+          type: integer
+          minimum: 1
+          maximum: 3600
+          default: 60
+          description: Delay between retry attempts
+          example: 300
+        notifications:
+          type: object
+          properties:
+            on_success:
+              type: boolean
+              default: false
+              description: Send notifications on successful execution
+            on_failure:
+              type: boolean
+              default: true
+              description: Send notifications on execution failure
+            email_recipients:
+              type: array
+              items:
+                type: string
+                format: email
+              maxItems: 10
+              description: Email addresses to notify
+
+    CreateWorkflowRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          description: Workflow name
+        description:
+          type: string
+          maxLength: 500
+          description: Workflow description
+        steps:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkflowStep"
+          minItems: 1
+          maxItems: 50
+          description: Workflow steps configuration
+        tags:
+          type: array
+          items:
+            type: string
+          maxItems: 10
+          description: Workflow tags
+        settings:
+          $ref: "#/components/schemas/WorkflowSettings"
+
+    UpdateWorkflowRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 100
+          description: Updated workflow name
+        description:
+          type: string
+          maxLength: 500
+          description: Updated workflow description
+        steps:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkflowStep"
+          minItems: 1
+          maxItems: 50
+          description: Updated workflow steps
+        tags:
+          type: array
+          items:
+            type: string
+          maxItems: 10
+          description: Updated workflow tags
+        settings:
+          $ref: "#/components/schemas/WorkflowSettings"
+        status:
+          type: string
+          enum: [active, inactive, draft]
+          description: Update workflow status
+
+    # Execution Schemas
+    ExecutionSummary:
+      type: object
+      required:
+        - id
+        - status
+        - started_at
+      properties:
+        id:
+          type: string
+          pattern: "^exec_[a-zA-Z0-9]{8,}$"
+          description: Unique execution identifier
+          example: "exec_abc123"
+        status:
+          type: string
+          enum: [pending, running, completed, failed, cancelled]
+          description: Execution status
+          example: "completed"
+        started_at:
+          type: string
+          format: date-time
+          description: When execution started
+          example: "2024-01-20T14:30:00Z"
+        completed_at:
+          type: string
+          format: date-time
+          description: When execution finished (null if still running)
+          example: "2024-01-20T14:32:15Z"
+        duration_seconds:
+          type: integer
+          description: Total execution time in seconds
+          example: 135
+
+    ExecutionDetail:
+      allOf:
+        - $ref: "#/components/schemas/ExecutionSummary"
+        - type: object
+          properties:
+            workflow_id:
+              type: string
+              pattern: "^wf_[a-zA-Z0-9]{8,}$"
+              description: ID of the executed workflow
+            inputs:
+              type: object
+              description: Input data provided to the execution
+            outputs:
+              type: object
+              description: Output data produced by the execution
+            steps:
+              type: array
+              items:
+                $ref: "#/components/schemas/ExecutionStep"
+              description: Detailed step execution results
+            logs:
+              type: array
+              items:
+                $ref: "#/components/schemas/ExecutionLog"
+              description: Execution logs and events
+
+    ExecutionStep:
+      type: object
+      required:
+        - step_id
+        - status
+        - started_at
+      properties:
+        step_id:
+          type: string
+          pattern: "^step_[a-zA-Z0-9]{8,}$"
+          description: ID of the workflow step
+        status:
+          type: string
+          enum: [pending, running, completed, failed, skipped]
+          description: Step execution status
+        started_at:
+          type: string
+          format: date-time
+          description: When step execution started
+        completed_at:
+          type: string
+          format: date-time
+          description: When step execution finished
+        duration_seconds:
+          type: integer
+          description: Step execution time
+        output:
+          type: object
+          description: Step output data
+        error:
+          type: string
+          description: Error message if step failed
+
+    ExecutionLog:
+      type: object
+      required:
+        - timestamp
+        - level
+        - message
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Log entry timestamp
+        level:
+          type: string
+          enum: [info, warn, error, debug]
+          description: Log level
+        message:
+          type: string
+          description: Log message
+        step_id:
+          type: string
+          pattern: "^step_[a-zA-Z0-9]{8,}$"
+          description: Associated step ID
+
+    ExecuteWorkflowRequest:
+      type: object
+      properties:
+        inputs:
+          type: object
+          description: Input data for workflow execution
+          example:
+            {
+              "document_url": "https://example.com/file.pdf",
+              "priority": "high",
+            }
+        metadata:
+          type: object
+          description: Additional metadata for tracking
+          example: { "source": "api_call", "user_id": "user_123" }
+        async:
+          type: boolean
+          default: true
+          description: Whether to execute asynchronously
+
+    ExecutionResponse:
+      type: object
+      required:
+        - execution_id
+        - status
+      properties:
+        execution_id:
+          type: string
+          pattern: "^exec_[a-zA-Z0-9]{8,}$"
+          description: Unique execution identifier
+          example: "exec_abc123def"
+        status:
+          type: string
+          enum: [queued, running]
+          description: Initial execution status
+          example: "queued"
+        estimated_duration_seconds:
+          type: integer
+          description: Estimated completion time
+          example: 300
+        webhook_url:
+          type: string
+          format: uri
+          description: Webhook URL for execution status updates
+
+    # Integration Schemas
+    Integration:
+      type: object
+      required:
+        - id
+        - name
+        - type
+        - app
+        - status
+      properties:
+        id:
+          type: string
+          pattern: "^int_[a-zA-Z0-9_]{8,}$"
+          description: Unique integration identifier
+          example: "int_slack_001"
+        name:
+          type: string
+          description: Human-readable integration name
+          example: "Slack Workspace"
+        type:
+          type: string
+          enum: [communication, productivity, storage, finance, crm, analytics]
+          description: Category of integration
+          example: "communication"
+        app:
+          type: string
+          enum:
+            [
+              slack,
+              google_drive,
+              microsoft_teams,
+              webhook,
+              zapier,
+              salesforce,
+              hubspot,
+              dropbox,
+            ]
+          description: Specific application/service
+          example: "slack"
+        status:
+          type: string
+          enum: [connected, disconnected, error, pending]
+          description: Connection status
+          example: "connected"
+        created_at:
+          type: string
+          format: date-time
+          description: When integration was created
+        connected_at:
+          type: string
+          format: date-time
+          description: When integration was last connected
+        last_sync:
+          type: string
+          format: date-time
+          description: When data was last synchronized
+        config:
+          type: object
+          description: Integration-specific configuration
+          example:
+            { "workspace_name": "AetherFlow Team", "channels": ["#workflows"] }
+        error_message:
+          type: string
+          description: Last error message if status is 'error'
+
+    IntegrationListResponse:
+      type: object
+      required:
+        - integrations
+        - total
+      properties:
+        integrations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Integration"
+        total:
+          type: integer
+          description: Total number of integrations
+          example: 3
+
+    CreateIntegrationRequest:
+      type: object
+      required:
+        - app
+        - type
+      properties:
+        app:
+          type: string
+          enum:
+            [
+              slack,
+              google_drive,
+              microsoft_teams,
+              webhook,
+              zapier,
+              salesforce,
+              hubspot,
+              dropbox,
+            ]
+          description: Application to integrate
+        type:
+          type: string
+          enum: [communication, productivity, storage, finance, crm, analytics]
+          description: Integration category
+        config:
+          type: object
+          description: Integration-specific configuration
+          example:
+            {
+              "scopes": ["channels:read", "chat:write"],
+              "redirect_uri": "https://app.aetherflow.com/callback",
+            }
+
+    # Webhook Schemas
+    Webhook:
+      type: object
+      required:
+        - id
+        - url
+        - events
+        - status
+      properties:
+        id:
+          type: string
+          pattern: "^wh_[a-zA-Z0-9]{8,}$"
+          description: Unique webhook identifier
+          example: "wh_12345678"
+        url:
+          type: string
+          format: uri
+          description: Webhook endpoint URL
+          example: "https://myapp.com/aetherflow-webhook"
+        events:
+          type: array
+          items:
+            type: string
+            enum:
+              [
+                workflow.started,
+                workflow.completed,
+                workflow.failed,
+                execution.step_completed,
+                execution.step_failed,
+              ]
+          minItems: 1
+          description: Events to trigger webhook
+          example: ["workflow.completed", "workflow.failed"]
+        status:
+          type: string
+          enum: [active, inactive, failed]
+          description: Webhook status
+          example: "active"
+        secret:
+          type: string
+          description: Secret for webhook signature verification
+          example: "whsec_abcdef123456"
+        created_at:
+          type: string
+          format: date-time
+          description: When webhook was created
+        last_triggered:
+          type: string
+          format: date-time
+          description: When webhook was last triggered
+
+    WebhookListResponse:
+      type: object
+      required:
+        - webhooks
+        - total
+      properties:
+        webhooks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Webhook"
+        total:
+          type: integer
+          description: Total number of webhooks
+
+    CreateWebhookRequest:
+      type: object
+      required:
+        - url
+        - events
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Webhook endpoint URL
+        events:
+          type: array
+          items:
+            type: string
+            enum:
+              [
+                workflow.started,
+                workflow.completed,
+                workflow.failed,
+                execution.step_completed,
+                execution.step_failed,
+              ]
+          minItems: 1
+          description: Events to trigger webhook
+        secret:
+          type: string
+          minLength: 16
+          description: Secret for webhook signature verification
+
+    # Analytics Schemas
+    AnalyticsResponse:
+      type: object
+      required:
+        - period
+        - total_executions
+        - successful_executions
+        - failed_executions
+      properties:
+        period:
+          type: string
+          enum: [7d, 30d, 90d, 1y]
+          description: Time period for analytics
+          example: "30d"
+        total_executions:
+          type: integer
+          description: Total workflow executions
+          example: 1250
+        successful_executions:
+          type: integer
+          description: Number of successful executions
+          example: 1180
+        failed_executions:
+          type: integer
+          description: Number of failed executions
+          example: 70
+        average_duration_seconds:
+          type: integer
+          description: Average execution duration
+          example: 245
+        workflows_by_status:
+          type: object
+          properties:
+            active:
+              type: integer
+              example: 15
+            inactive:
+              type: integer
+              example: 3
+            draft:
+              type: integer
+              example: 2
+        executions_by_workflow:
+          type: array
+          items:
+            type: object
+            properties:
+              workflow_id:
+                type: string
+                example: "wf_12345678"
+              workflow_name:
+                type: string
+                example: "Invoice Processing"
+              executions:
+                type: integer
+                example: 450
+              success_rate:
+                type: number
+                format: float
+                minimum: 0
+                maximum: 1
+                example: 0.94
+        daily_stats:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                format: date
+                example: "2024-01-20"
+              executions:
+                type: integer
+                example: 45
+              success_rate:
+                type: number
+                format: float
+                example: 0.96
